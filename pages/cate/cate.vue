@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<!-- 搜索框 -->
+		<view class="search-box">
+			<mySearch @click="gotoSearch"></mySearch>
+		</view>
 		<view class="scroll-view-container">
 			<!-- 左侧滚动视图 -->
 			<scroll-view scroll-y="true" class="left-scroll" :style="{height: wh + 'px'}">
@@ -16,7 +20,8 @@
 					<!-- 动态渲染三级分类的列表数据 -->
 					<view class="cate-lv3-list">
 						<!-- 三级分类 Item 项 -->
-						<view class="cate-lv3-item" v-for="(item3, i3) in item2.children" :key="i3" @click="gotoGoodsList(item3)">
+						<view class="cate-lv3-item" v-for="(item3, i3) in item2.children" :key="i3"
+							@click="gotoGoodsList(item3)">
 							<!-- 图片 -->
 							<image :src="item3.cat_icon.replace('dev','web')"></image>
 							<!-- 文本 -->
@@ -30,7 +35,11 @@
 </template>
 
 <script>
+	import mySearch from '../../compontents/my-search/my-search.vue'
 	export default {
+		components: {
+			mySearch
+		},
 		data() {
 			return {
 				// 窗口的可用高度 = 屏幕高度 - navigationBar高度 - tabBar 高度
@@ -50,7 +59,8 @@
 			const sysInfo = uni.getSystemInfoSync()
 			console.log(sysInfo);
 			// 为 wh 窗口可用高度动态赋值
-			this.wh = sysInfo.windowHeight
+			// 可用高度 = 屏幕高度 - navigationBar高度 - tabBar高度 - 自定义的search组件高度
+			this.wh = sysInfo.windowHeight - 50
 			// 调用获取分类列表数据的方法
 			this.getCateList()
 		},
@@ -79,9 +89,15 @@
 				this.scrollTop = this.scrollTop === 0 ? 1 : 0
 			},
 			// 跳转到商品列表页面
-			gotoGoodsList(item){
+			gotoGoodsList(item) {
 				uni.navigateTo({
-					url:'/subpkg/goods_list/goods_list?cid='+item.cat_id
+					url: '/subpkg/goods_list/goods_list?cid=' + item.cat_id
+				})
+			},
+			// 跳转到分包中的搜索页面
+			gotoSearch() {
+				uni.navigateTo({
+					url: '/subpkg/search/search'
 				})
 			}
 		}
@@ -152,5 +168,12 @@
 				font-size: 12px;
 			}
 		}
+	}
+
+	// 吸顶效果
+	.search-box {
+		position: sticky;
+		top: 0;
+		z-index: 999;
 	}
 </style>
